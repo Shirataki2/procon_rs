@@ -1,7 +1,7 @@
 use std::cmp::*;
-use std::ops::*;
+use std::collections::{btree_map::Range, BTreeMap};
 use std::iter::FromIterator;
-use std::collections::{BTreeMap, btree_map::Range};
+use std::ops::*;
 
 pub struct BTreeMultiSet<T: Ord> {
     ctr: BTreeMap<T, usize>,
@@ -25,7 +25,7 @@ impl<T: Ord> BTreeMultiSet<T> {
                     self.ctr.remove(v);
                 }
                 true
-            },
+            }
             None => false,
         }
     }
@@ -56,7 +56,11 @@ impl<T: Ord> BTreeMultiSet<T> {
 
     pub fn range<R: RangeBounds<T>>(&self, range: R) -> BTreeMultiSetIterator<T> {
         let range = self.ctr.range(range);
-        BTreeMultiSetIterator { range, item: None, count: 0 }
+        BTreeMultiSetIterator {
+            range,
+            item: None,
+            count: 0,
+        }
     }
 
     pub fn iter(&self) -> BTreeMultiSetIterator<T> {
@@ -80,7 +84,11 @@ impl<'a, T: Ord> Iterator for BTreeMultiSetIterator<'a, T> {
     type Item = &'a T;
     fn next(&mut self) -> Option<Self::Item> {
         if self.count == 0 {
-            let (item, count) = self.range.next().map(|(k, &v)| (Some(k), v)).unwrap_or((None, 0));
+            let (item, count) = self
+                .range
+                .next()
+                .map(|(k, &v)| (Some(k), v))
+                .unwrap_or((None, 0));
             self.item = item;
             self.count = count;
         }
@@ -94,7 +102,11 @@ impl<'a, T: Ord> Iterator for BTreeMultiSetIterator<'a, T> {
 impl<'a, T: Ord> std::iter::DoubleEndedIterator for BTreeMultiSetIterator<'a, T> {
     fn next_back(&mut self) -> Option<Self::Item> {
         let item = if self.count == 0 {
-            let (item, count) = self.range.next_back().map(|(k, &v)| (Some(k), v)).unwrap_or((None, 0));
+            let (item, count) = self
+                .range
+                .next_back()
+                .map(|(k, &v)| (Some(k), v))
+                .unwrap_or((None, 0));
             self.item = item;
             self.count = count;
             item
@@ -109,9 +121,9 @@ impl<'a, T: Ord> std::iter::DoubleEndedIterator for BTreeMultiSetIterator<'a, T>
 }
 
 impl<T: Ord> FromIterator<T> for BTreeMultiSet<T> {
-    fn from_iter<I>(iter: I) -> Self 
+    fn from_iter<I>(iter: I) -> Self
     where
-        I: IntoIterator<Item=T>
+        I: IntoIterator<Item = T>,
     {
         let mut set = BTreeMultiSet::new();
         for item in iter {
@@ -141,7 +153,10 @@ mod tests {
         let mut set: BTreeMultiSet<i32> = v.into_iter().collect();
         set.insert(0);
         set.insert(4);
-        assert_eq!(set.range(3..).copied().collect::<Vec<_>>(), vec![3, 3, 4, 4, 4]);
+        assert_eq!(
+            set.range(3..).copied().collect::<Vec<_>>(),
+            vec![3, 3, 4, 4, 4]
+        );
         assert_eq!(set.range(..1).copied().collect::<Vec<_>>(), vec![0, 0]);
     }
 

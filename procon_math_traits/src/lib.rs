@@ -1,4 +1,9 @@
-use std::{ fmt, ops::*, iter::{Sum, Product}, marker::PhantomData };
+use std::{
+    fmt,
+    iter::{Product, Sum},
+    marker::PhantomData,
+    ops::*,
+};
 
 pub trait Zero {
     fn zero() -> Self;
@@ -33,45 +38,123 @@ pub trait Bounded: BoundedBelow + BoundedAbove {}
 impl<T: BoundedBelow + BoundedAbove + ?Sized> Bounded for T {}
 
 pub trait PrimitiveInteger:
-    'static + Copy + Clone + Ord + Eq + Send + Sync +
-    Not<Output = Self> + Add<Output = Self> +
-    Sub<Output = Self> + Mul<Output = Self> +
-    Div<Output = Self> + Rem<Output = Self> +
-    AddAssign + SubAssign + MulAssign + DivAssign + RemAssign +
-    Sum + Product + Zero + One + Bounded +
-    BitOr<Output = Self> + BitAnd<Output = Self> +
-    BitXor<Output = Self> + BitOrAssign + BitAndAssign +
-    BitXorAssign + Shl<Output = Self> + Shr<Output = Self> +
-    ShlAssign + ShrAssign + fmt::Display + fmt::Debug +
-    fmt::Binary + fmt::Octal
-{}
+    'static
+    + Copy
+    + Clone
+    + Ord
+    + Eq
+    + Send
+    + Sync
+    + Not<Output = Self>
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
+    + Div<Output = Self>
+    + Rem<Output = Self>
+    + AddAssign
+    + SubAssign
+    + MulAssign
+    + DivAssign
+    + RemAssign
+    + Sum
+    + Product
+    + Zero
+    + One
+    + Bounded
+    + BitOr<Output = Self>
+    + BitAnd<Output = Self>
+    + BitXor<Output = Self>
+    + BitOrAssign
+    + BitAndAssign
+    + BitXorAssign
+    + Shl<Output = Self>
+    + Shr<Output = Self>
+    + ShlAssign
+    + ShrAssign
+    + fmt::Display
+    + fmt::Debug
+    + fmt::Binary
+    + fmt::Octal
+{
+}
 
 pub trait PrimitiveFloating:
-    'static + Copy + Clone + PartialEq + PartialOrd + Send + Sync +
-    Neg<Output = Self> + Add<Output = Self> +
-    Sub<Output = Self> + Mul<Output = Self> +
-    Div<Output = Self> + Rem<Output = Self> +
-    AddAssign + SubAssign + MulAssign + DivAssign + RemAssign +
-    Sum + Product + Zero + One +
-    fmt::Display + fmt::Debug
-{}
+    'static
+    + Copy
+    + Clone
+    + PartialEq
+    + PartialOrd
+    + Send
+    + Sync
+    + Neg<Output = Self>
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
+    + Div<Output = Self>
+    + Rem<Output = Self>
+    + AddAssign
+    + SubAssign
+    + MulAssign
+    + DivAssign
+    + RemAssign
+    + Sum
+    + Product
+    + Zero
+    + One
+    + fmt::Display
+    + fmt::Debug
+{
+}
 
 pub trait Field:
-    'static + Copy + Clone + PartialEq + PartialOrd + Send + Sync +
-    Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> +
-    Div<Output = Self> + Rem<Output = Self> +
-    AddAssign + SubAssign + MulAssign + DivAssign + RemAssign +
-    Sum + Product + Zero + One
-{}
+    'static
+    + Copy
+    + Clone
+    + PartialEq
+    + PartialOrd
+    + Send
+    + Sync
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
+    + Div<Output = Self>
+    + Rem<Output = Self>
+    + AddAssign
+    + SubAssign
+    + MulAssign
+    + DivAssign
+    + RemAssign
+    + Sum
+    + Product
+    + Zero
+    + One
+{
+}
 
-impl<T> Field for T
-where
-    T: 'static + Copy + Clone + PartialEq + PartialOrd + Send + Sync +
-        Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> +
-        Div<Output = Self> + Rem<Output = Self> +
-        AddAssign + SubAssign + MulAssign + DivAssign + RemAssign +
-        Sum + Product + Zero + One
-{}
+impl<T> Field for T where
+    T: 'static
+        + Copy
+        + Clone
+        + PartialEq
+        + PartialOrd
+        + Send
+        + Sync
+        + Add<Output = Self>
+        + Sub<Output = Self>
+        + Mul<Output = Self>
+        + Div<Output = Self>
+        + Rem<Output = Self>
+        + AddAssign
+        + SubAssign
+        + MulAssign
+        + DivAssign
+        + RemAssign
+        + Sum
+        + Product
+        + Zero
+        + One
+{
+}
 
 macro_rules! impl_primitive_integer {
     ($($t : ty)*) => {$(
@@ -95,7 +178,7 @@ macro_rules! impl_primitive_integer {
                 Self::min_value()
             }
         }
-    
+
         impl BoundedAbove for $t {
             fn max() -> Self {
                 Self::max_value()
@@ -132,7 +215,7 @@ impl_primitive_floating!(f32 f64);
 pub struct Additive<T>(PhantomData<fn() -> T>);
 impl<T> Monoid for Additive<T>
 where
-    T: Copy + Add<Output = T> + Zero
+    T: Copy + Add<Output = T> + Zero,
 {
     type T = T;
     fn id() -> Self::T {
@@ -146,7 +229,7 @@ where
 pub struct Multiplicative<T>(PhantomData<fn() -> T>);
 impl<T> Monoid for Multiplicative<T>
 where
-    T: Copy + Mul<Output = T> + One
+    T: Copy + Mul<Output = T> + One,
 {
     type T = T;
     fn id() -> T {

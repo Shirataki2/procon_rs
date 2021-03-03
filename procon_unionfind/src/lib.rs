@@ -26,7 +26,9 @@ impl UnionFind {
     pub fn unite(&mut self, mut x: usize, mut y: usize) -> bool {
         x = self.root(x);
         y = self.root(y);
-        if x == y { return false }
+        if x == y {
+            return false;
+        }
         let (x, y) = if self.sizes[x] > self.sizes[y] {
             (x, y)
         } else {
@@ -71,7 +73,9 @@ mod tests {
         assert!(!uf.is_same(0, 2));
         assert_eq!(uf.group_size(0), 2);
         assert_eq!(uf.group_size(4), 1);
-        (2..=4).for_each(|i| { uf.unite(0, i); } );
+        (2..=4).for_each(|i| {
+            uf.unite(0, i);
+        });
         assert_eq!(uf.group_size(0), 5);
         assert_eq!(uf.group_size(3), 5);
         assert_eq!(uf.len(), 1);

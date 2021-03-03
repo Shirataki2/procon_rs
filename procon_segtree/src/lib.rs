@@ -2,7 +2,7 @@ extern crate __procon_math_traits as math_traits;
 
 use math_traits::Monoid;
 
-use std::ops::{RangeBounds, Bound};
+use std::ops::{Bound, RangeBounds};
 
 pub struct SegTree<M>
 where
@@ -17,9 +17,12 @@ impl<M: Monoid> From<Vec<M::T>> for SegTree<M> {
     fn from(v: Vec<M::T>) -> Self {
         let mut size = 1;
         let mut log = 0;
-        while v.len() > size { size <<= 1; log += 1; }
-        let mut data = vec![M::id(); 2*size];
-        data[size..(size+v.len())].clone_from_slice(&v);
+        while v.len() > size {
+            size <<= 1;
+            log += 1;
+        }
+        let mut data = vec![M::id(); 2 * size];
+        data[size..(size + v.len())].clone_from_slice(&v);
         let mut st = Self { size, log, data };
         (0..size).rev().for_each(|i| st.update(i));
         st
@@ -66,7 +69,7 @@ impl<M: Monoid> SegTree<M> {
 
     pub fn query<R>(&self, range: R) -> M::T
     where
-        R: RangeBounds<usize>
+        R: RangeBounds<usize>,
     {
         use Bound::*;
         let start = match range.start_bound() {
@@ -85,8 +88,8 @@ impl<M: Monoid> SegTree<M> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::math_traits::*;
+    use super::*;
 
     #[test]
     fn test_sum_segtree() {
@@ -100,11 +103,11 @@ mod tests {
 
     fn check_all_sum<M: Monoid>(st: &SegTree<M>, v: &[M::T])
     where
-        M::T: PrimitiveInteger
+        M::T: PrimitiveInteger,
     {
         let n = v.len();
-        for l in 0..n-1 {
-            for r in l+1..n {
+        for l in 0..n - 1 {
+            for r in l + 1..n {
                 let ans = v[l..=r].iter().fold(M::T::zero(), |a, &b| a + b);
                 assert_eq!(ans, st.query(l..=r));
             }
