@@ -2,6 +2,7 @@
 members = [
     "procon_complex",
     "procon_input",
+    "procon_itertools",
     "procon_math",
     "procon_math_traits",
     "procon_modint",
@@ -32,3 +33,4 @@ __procon_math = { package = "procon_math", path = "./procon_math" }
 __procon_complex = { package = "procon_complex", path = "./procon_complex" }
 __procon_modint = { package = "procon_modint", path = "./procon_modint" }
 __procon_input = { package = "procon_input", path = "./procon_input" }
+__procon_itertools = { package = "procon_itertools", path = "./procon_itertools" }
