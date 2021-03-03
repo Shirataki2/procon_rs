@@ -1,7 +1,73 @@
 extern crate __procon_math_traits as math_traits;
 
 use math_traits::PrimitiveInteger as Int;
-use std::mem::swap;
+use std::{hash, mem::swap};
+
+pub fn divisor<T: Int>(n: T) -> Vec<T> {
+    let mut ret = Vec::new();
+    let mut i = T::one();
+    loop {
+        if i * i > n {
+            break;
+        }
+        if n % i == T::zero() {
+            ret.push(i);
+            if i * i != n {
+                ret.push(n / i);
+            }
+        }
+        i += T::one();
+    }
+    ret.sort_unstable();
+    ret
+}
+
+pub fn factorize<T: Int>(n: T) -> Vec<T> {
+    let mut ret = vec![];
+    let mut n = n;
+    let two = T::one() + T::one();
+    let three = T::one() + two;
+    while n % two == T::zero() {
+        ret.push(two);
+        n /= two;
+    }
+    let mut i = three;
+    while i * i <= n {
+        while n % i == T::zero() {
+            ret.push(i);
+            n /= i;
+        }
+        i += two;
+    }
+    if n > two {
+        ret.push(n)
+    }
+    ret
+}
+
+pub fn factorize_pair<T: Int + hash::Hash>(n: T) -> std::collections::HashMap<T, usize> {
+    let mut ret = std::collections::HashMap::new();
+    let mut n = n;
+    let two = T::one() + T::one();
+    let three = T::one() + two;
+
+    while n % two == T::zero() {
+        *ret.entry(two).or_insert(0) += 1;
+        n /= two;
+    }
+    let mut i = three;
+    while i * i <= n {
+        while n % i == T::zero() {
+            *ret.entry(i).or_insert(0) += 1;
+            n /= i;
+        }
+        i += two;
+    }
+    if n > two {
+        *ret.entry(n).or_insert(0) += 1;
+    }
+    ret
+}
 
 pub fn gcd<T: Int>(a: T, b: T) -> T {
     if b == T::zero() {
@@ -135,6 +201,45 @@ pub fn floor_sum<T: Int>(n: T, m: T, mut a: T, mut b: T) -> T {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::HashMap;
+
+    #[test]
+    fn test_divisor() {
+        let s = divisor(108);
+        assert_eq!(s, vec![1, 2, 3, 4, 6, 9, 12, 18, 27, 36, 54, 108]);
+        let s = divisor(1);
+        assert_eq!(s, vec![1]);
+        let s = divisor(25);
+        assert_eq!(s, vec![1, 5, 25]);
+        let s = divisor(65536);
+        assert_eq!(
+            s,
+            vec![
+                1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536
+            ]
+        );
+    }
+
+    #[test]
+    fn test_factorize() {
+        assert_eq!(factorize(24), vec![2, 2, 2, 3]);
+        assert_eq!(factorize(498640), vec![2, 2, 2, 2, 5, 23, 271]);
+    }
+
+    #[test]
+    fn test_factorize_large_prime() {
+        assert_eq!(factorize(1_000_000_000_039_i64), vec![1_000_000_000_039]);
+    }
+
+    #[test]
+    fn test_factorize_pair() {
+        let mut map = HashMap::new();
+        map.insert(2, 4);
+        map.insert(5, 1);
+        map.insert(23, 1);
+        map.insert(271, 1);
+        assert_eq!(factorize_pair(498640), map);
+    }
 
     #[test]
     fn test_gcd_small() {
