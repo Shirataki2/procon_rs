@@ -18,6 +18,7 @@ impl<M: Monoid> From<Vec<M::T>> for SegTree<M> {
         let mut size = 1;
         let mut log = 0;
         while v.len() > size { size <<= 1; log += 1; }
+        println!("{}", log);
         let mut data = vec![M::id(); 2*size];
         data[size..(size+v.len())].clone_from_slice(&v);
         let mut st = Self { size, log, data };
@@ -38,7 +39,7 @@ impl<M: Monoid> SegTree<M> {
     pub fn set(&mut self, mut idx: usize, v: M::T) {
         idx += self.size;
         self.data[idx] = v;
-        (0..=self.log).for_each(|i| self.update(idx >> i));
+        (1..=self.log).for_each(|i| self.update(idx >> i));
     }
 
     fn update(&mut self, idx: usize) {
@@ -90,8 +91,11 @@ mod tests {
 
     #[test]
     fn test_sum_segtree() {
-        let v = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
-        let st: SegTree<Additive<_>> = v.clone().into();
+        let mut v = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
+        let mut st: SegTree<Additive<_>> = v.clone().into();
+        check_all_sum(&st, &v);
+        v[3] = 10;
+        st.set(3, 10);
         check_all_sum(&st, &v);
     }
 
