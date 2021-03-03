@@ -18,7 +18,6 @@ impl<M: Monoid> From<Vec<M::T>> for SegTree<M> {
         let mut size = 1;
         let mut log = 0;
         while v.len() > size { size <<= 1; log += 1; }
-        println!("{}", log);
         let mut data = vec![M::id(); 2*size];
         data[size..(size+v.len())].clone_from_slice(&v);
         let mut st = Self { size, log, data };
