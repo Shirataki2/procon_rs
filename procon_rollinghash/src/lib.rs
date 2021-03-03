@@ -27,14 +27,9 @@ pub struct RollingHash<H> {
     __phantom: PhantomData<fn() -> H>,
 }
 
-impl<H: Hash> From<&str> for RollingHash<H> {
-    fn from(s: &str) -> RollingHash<H> {
-        s.as_bytes().into()
-    }
-}
-
-impl<H: Hash> From<&[u8]> for RollingHash<H> {
-    fn from(s: &[u8]) -> RollingHash<H> {
+impl<H: Hash, B: AsRef<[u8]>> From<B> for RollingHash<H> {
+    fn from(s: B) -> RollingHash<H> {
+        let s = s.as_ref();
         let n = s.len();
         let mut pow = vec![1; n + 1];
         let mut hash = vec![0; n + 1];

@@ -9,6 +9,7 @@ members = [
     "procon_multiset",
     "procon_rollinghash",
     "procon_segtree",
+    "procon_string",
     "procon_unionfind",
 ]
 
@@ -36,3 +37,4 @@ __procon_modint = { package = "procon_modint", path = "./procon_modint" }
 __procon_input = { package = "procon_input", path = "./procon_input" }
 __procon_itertools = { package = "procon_itertools", path = "./procon_itertools" }
 __procon_rollinghash = { package = "procon_rollinghash", path = "./procon_rollinghash" }
+__procon_string = { package = "procon_string", path = "./procon_string" }
