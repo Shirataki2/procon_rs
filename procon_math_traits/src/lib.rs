@@ -78,6 +78,12 @@ pub trait PrimitiveInteger:
 {
 }
 
+macro_rules! fn_float {
+    ($($f: ident)*) => {
+        $(fn $f(self) -> Self;)*
+    };
+}
+
 pub trait PrimitiveFloating:
     'static
     + Copy
@@ -104,6 +110,22 @@ pub trait PrimitiveFloating:
     + fmt::Display
     + fmt::Debug
 {
+    fn_float!(
+        float ceil round trunc fract abs signum sqrt
+        exp exp2 ln log2 log10 cbrt sin cos tan
+        asin acos atan exp_m1 ln_1p sinh cosh tanh
+        asinh acosh atanh recip to_degrees to_radians
+    );
+
+    fn sin_cos(&self) -> (Self, Self);
+    fn atan2(&self, rhs: Self) -> Self;
+    fn hypot(&self, rhs: Self) -> Self;
+
+    fn eps() -> Self;
+    fn pi() -> Self;
+    fn pi_deg() -> Self;
+    fn tau() -> Self;
+    fn tau_deg() -> Self;
 }
 
 pub trait Field:
@@ -189,8 +211,17 @@ macro_rules! impl_primitive_integer {
     )*}
 }
 
+macro_rules! impl_float {
+    ($($f: ident)*) => {
+        $(
+            #[allow(unconditional_recursion)]
+            fn $f(self) -> Self { self.$f() }
+        )*
+    };
+}
+
 macro_rules! impl_primitive_floating {
-    ($($t : ty)*) => {$(
+    ($($t : tt)*) => {$(
         impl Zero for $t {
             #[inline]
             fn zero() -> Self {
@@ -205,7 +236,29 @@ macro_rules! impl_primitive_floating {
             }
         }
 
-        impl PrimitiveFloating for $t {}
+        impl PrimitiveFloating for $t {
+            impl_float!(
+                float ceil round trunc fract abs signum sqrt
+                exp exp2 ln log2 log10 cbrt sin cos tan
+                asin acos atan exp_m1 ln_1p sinh cosh tanh
+                asinh acosh atanh recip to_degrees to_radians
+            );
+
+            #[allow(unconditional_recursion)]
+            fn sin_cos(&self) -> (Self, Self) {
+                self.sin_cos()
+            }
+
+            #[allow(unconditional_recursion)]
+            fn atan2(&self, rhs: Self) -> Self { self.atan2(rhs) }
+            #[allow(unconditional_recursion)]
+            fn hypot(&self, rhs: Self) -> Self { self.hypot(rhs) }
+            fn eps() -> Self { std::$t::EPSILON }
+            fn pi() -> Self { std::$t::consts::PI }
+            fn pi_deg() -> Self { 180.0 }
+            fn tau() -> Self { std::$t::consts::PI * 2.0 }
+            fn tau_deg() -> Self { 360.0 }
+        }
     )*}
 }
 
