@@ -18,3 +18,4 @@ __procon_segtree = { package = "procon_segtree", path = "./procon_segtree" }
 __procon_math_traits = { package = "procon_math_traits", path = "./procon_math_traits" }
 __procon_unionfind = { package = "procon_unionfind", path = "./procon_unionfind" }
 __procon_multiset = { package = "procon_multiset", path = "./procon_multiset" }
+__procon_math = { package = "procon_math", path = "./procon_math" }
