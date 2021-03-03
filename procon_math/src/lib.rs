@@ -1,6 +1,7 @@
 extern crate __procon_math_traits as math_traits;
 
 use math_traits::PrimitiveInteger as Int;
+use std::mem::swap;
 
 pub fn gcd<T: Int>(a: T, b: T) -> T {
     if b == T::zero() {
@@ -43,6 +44,92 @@ pub fn invmod<T: Int>(x: T, modulo: T) -> T {
 
 pub fn signed_mod<T: Int>(x: T, modulo: T) -> T {
     (x % modulo + modulo) % modulo
+}
+
+pub fn invgcd<T: Int>(a: T, b: T) -> (T, T) {
+    let a = signed_mod(a, b);
+    if a == T::zero() {
+        return (b, T::zero());
+    }
+    // Contracts:
+    // [1] s - m0 * a = 0 (mod b)
+    // [2] t - m1 * a = 0 (mod b)
+    // [3] s * |m1| + t * |m0| <= b
+    let mut s = b;
+    let mut t = a;
+    let mut m0 = T::zero();
+    let mut m1 = T::one();
+
+    while t != T::zero() {
+        let u = s / t;
+        s -= t * u;
+        m0 -= m1 * u; // |m1 * u| <= |m1| * s <= b
+
+        // [3]:
+        // (s - t * u) * |m1| + t * |m0 - m1 * u|
+        // <= s * |m1| - t * u * |m1| + t * (|m0| + |m1| * u)
+        // = s * |m1| + t * |m0| <= b
+
+        swap(&mut s, &mut t);
+        swap(&mut m0, &mut m1);
+    }
+    // by [3]: |m0| <= b/g
+    // by g != b: |m0| < b/g
+    if m0 < T::zero() {
+        m0 += b / s;
+    }
+    (s, m0)
+}
+
+pub fn crt<T: Int>(r: &[T], m: &[T]) -> Option<(T, T)> {
+    assert_eq!(r.len(), m.len());
+    let (mut r0, mut m0) = (T::zero(), T::one());
+    for (&(mut ri), &(mut mi)) in r.iter().zip(m.iter()) {
+        assert!(mi >= T::one());
+        if m0 < mi {
+            swap(&mut r0, &mut ri);
+            swap(&mut m0, &mut mi);
+        }
+        if m0 % mi == T::zero() {
+            if r0 % mi != ri {
+                return None;
+            }
+            continue;
+        }
+        let (g, im) = invgcd(m0, mi);
+        let u1 = mi / g;
+        if (ri - r0) % g != T::zero() {
+            return None;
+        }
+        let x = (ri - r0) / g % u1 * im % u1;
+        r0 += x * m0;
+        m0 *= u1;
+        if r0 < T::zero() {
+            r0 += m0;
+        }
+    }
+    Some((r0, m0))
+}
+
+pub fn floor_sum<T: Int>(n: T, m: T, mut a: T, mut b: T) -> T {
+    let mut ans = T::zero();
+    let two = T::one() + T::one();
+    if a >= m {
+        ans += (n - T::one()) * n * (a / m) / two;
+        a %= m;
+    }
+    if b >= m {
+        ans += n * (b / m);
+        b %= m;
+    }
+    let y_max = (a * n + b) / m;
+    let x_max = y_max * m - b;
+    if y_max == T::zero() {
+        return ans;
+    }
+    ans += (n - (x_max + a - T::one()) / a) * y_max;
+    ans += floor_sum(y_max, a, m, (a - x_max % a) % a);
+    ans
 }
 
 #[cfg(test)]
@@ -114,5 +201,29 @@ mod tests {
         let m = 1_000_000_007_i64;
         assert_eq!(powmod(18, 75, m), 879190096);
         assert_eq!(powmod(977812, 8877774, m), 758213842);
+    }
+
+    #[test]
+    fn test_crt() {
+        let a = [44, 23, 13];
+        let b = [13, 50, 22];
+        assert_eq!(crt(&a, &b), Some((1773, 7150)));
+        let a = [12345_i64, 67890, 99999];
+        let b = [13, 444321, 95318];
+        assert_eq!(crt(&a, &b), Some((103333581255, 550573258014)));
+        let a = [0, 3, 4];
+        let b = [1, 9, 5];
+        assert_eq!(crt(&a, &b), Some((39, 45)));
+    }
+
+    #[test]
+    fn test_floor_sum() {
+        assert_eq!(floor_sum(0, 1, 0, 0), 0);
+        assert_eq!(floor_sum(1_000_000_000_i64, 1, 1, 1), 500_000_000_500_000_000);
+        assert_eq!(
+            floor_sum(1_000_000_000_i64, 1_000_000_000, 999_999_999, 999_999_999),
+            499_999_999_500_000_000
+        );
+        assert_eq!(floor_sum(332955, 5590132, 2231, 999423), 22014575);
     }
 }

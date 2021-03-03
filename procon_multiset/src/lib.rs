@@ -125,7 +125,6 @@ impl<T: Ord> FromIterator<T> for BTreeMultiSet<T> {
 mod tests {
     use super::*;
 
-
     #[test]
     fn test_from_vec() {
         let v = vec![0, 2, 1, 3, 1, 4, 2, 3, 4, 1];
