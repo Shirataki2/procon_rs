@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "procon_complex",
+    "procon_input",
     "procon_math",
     "procon_math_traits",
     "procon_modint",
@@ -30,4 +31,4 @@ __procon_multiset = { package = "procon_multiset", path = "./procon_multiset" }
 __procon_math = { package = "procon_math", path = "./procon_math" }
 __procon_complex = { package = "procon_complex", path = "./procon_complex" }
 __procon_modint = { package = "procon_modint", path = "./procon_modint" }
-__procon_io = { package = "procon_io", path = "./procon_io" }
+__procon_input = { package = "procon_input", path = "./procon_input" }

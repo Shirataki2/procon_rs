@@ -6,4 +6,4 @@ pub extern crate __procon_modint as modint;
 pub extern crate __procon_multiset as multiset;
 pub extern crate __procon_segtree as segtree;
 pub extern crate __procon_unionfind as unionfind;
-pub extern crate __procon_io as io;
+pub extern crate __procon_input as input;
