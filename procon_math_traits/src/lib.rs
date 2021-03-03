@@ -111,15 +111,15 @@ pub trait PrimitiveFloating:
     + fmt::Debug
 {
     fn_float!(
-        float ceil round trunc fract abs signum sqrt
+        floor ceil round trunc fract abs signum sqrt
         exp exp2 ln log2 log10 cbrt sin cos tan
         asin acos atan exp_m1 ln_1p sinh cosh tanh
         asinh acosh atanh recip to_degrees to_radians
     );
 
-    fn sin_cos(&self) -> (Self, Self);
-    fn atan2(&self, rhs: Self) -> Self;
-    fn hypot(&self, rhs: Self) -> Self;
+    fn sin_cos(self) -> (Self, Self);
+    fn atan2(self, rhs: Self) -> Self;
+    fn hypot(self, rhs: Self) -> Self;
 
     fn eps() -> Self;
     fn pi() -> Self;
@@ -211,13 +211,28 @@ macro_rules! impl_primitive_integer {
     )*}
 }
 
-macro_rules! impl_float {
-    ($($f: ident)*) => {
-        $(
-            #[allow(unconditional_recursion)]
-            fn $f(self) -> Self { self.$f() }
-        )*
-    };
+macro_rules! forward {
+    ($( Self :: $method:ident ( self $( , $arg:ident : $ty:ty )* ) -> $ret:ty ; )*)
+    => {$(
+        #[inline]
+        fn $method(self $( , $arg : $ty )* ) -> $ret {
+            Self::$method(self $( , $arg )* )
+        }
+    )*};
+    ($( $base:ident :: $method:ident ( self $( , $arg:ident : $ty:ty )* ) -> $ret:ty ; )*)
+    => {$(
+        #[inline]
+        fn $method(self $( , $arg : $ty )* ) -> $ret {
+            <Self as $base>::$method(self $( , $arg )* )
+        }
+    )*};
+    ($( $base:ident :: $method:ident ( $( $arg:ident : $ty:ty ),* ) -> $ret:ty ; )*)
+    => {$(
+        #[inline]
+        fn $method( $( $arg : $ty ),* ) -> $ret {
+            <Self as $base>::$method( $( $arg ),* )
+        }
+    )*}
 }
 
 macro_rules! impl_primitive_floating {
@@ -237,22 +252,43 @@ macro_rules! impl_primitive_floating {
         }
 
         impl PrimitiveFloating for $t {
-            impl_float!(
-                float ceil round trunc fract abs signum sqrt
-                exp exp2 ln log2 log10 cbrt sin cos tan
-                asin acos atan exp_m1 ln_1p sinh cosh tanh
-                asinh acosh atanh recip to_degrees to_radians
-            );
-
-            #[allow(unconditional_recursion)]
-            fn sin_cos(&self) -> (Self, Self) {
-                self.sin_cos()
+            forward! {
+                Self::floor(self) -> Self;
+                Self::ceil(self) -> Self;
+                Self::round(self) -> Self;
+                Self::trunc(self) -> Self;
+                Self::fract(self) -> Self;
+                Self::abs(self) -> Self;
+                Self::signum(self) -> Self;
+                Self::recip(self) -> Self;
+                Self::sqrt(self) -> Self;
+                Self::exp(self) -> Self;
+                Self::exp2(self) -> Self;
+                Self::ln(self) -> Self;
+                Self::log2(self) -> Self;
+                Self::log10(self) -> Self;
+                Self::to_degrees(self) -> Self;
+                Self::to_radians(self) -> Self;
+                Self::cbrt(self) -> Self;
+                Self::hypot(self, other: Self) -> Self;
+                Self::sin(self) -> Self;
+                Self::cos(self) -> Self;
+                Self::tan(self) -> Self;
+                Self::asin(self) -> Self;
+                Self::acos(self) -> Self;
+                Self::atan(self) -> Self;
+                Self::atan2(self, other: Self) -> Self;
+                Self::sin_cos(self) -> (Self, Self);
+                Self::exp_m1(self) -> Self;
+                Self::ln_1p(self) -> Self;
+                Self::sinh(self) -> Self;
+                Self::cosh(self) -> Self;
+                Self::tanh(self) -> Self;
+                Self::asinh(self) -> Self;
+                Self::acosh(self) -> Self;
+                Self::atanh(self) -> Self;
             }
 
-            #[allow(unconditional_recursion)]
-            fn atan2(&self, rhs: Self) -> Self { self.atan2(rhs) }
-            #[allow(unconditional_recursion)]
-            fn hypot(&self, rhs: Self) -> Self { self.hypot(rhs) }
             fn eps() -> Self { std::$t::EPSILON }
             fn pi() -> Self { std::$t::consts::PI }
             fn pi_deg() -> Self { 180.0 }
