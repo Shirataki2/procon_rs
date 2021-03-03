@@ -11,3 +11,4 @@ publish = false
 name = "procon_segtree"
 
 [dependencies]
+__procon_math_traits = { package = "procon_math_traits", path = "../procon_math_traits" }
