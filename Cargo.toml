@@ -16,3 +16,4 @@ name = "procon"
 [dependencies]
 __procon_segtree = { package = "procon_segtree", path = "./procon_segtree" }
 __procon_math_traits = { package = "procon_math_traits", path = "./procon_math_traits" }
+__procon_unionfind = { package = "procon_unionfind", path = "./procon_unionfind" }

@@ -1,0 +1,17 @@
+[tasks.new]
+workspace = false
+description = "Make new module"
+script = ['''
+#!/usr/bin/env bash
+set -x
+
+if [ $# != 1 ]; then
+    echo "Missing Argument"
+    exit 1
+fi
+crate=procon_$1
+echo $crate
+cargo new --lib $crate
+echo "__$crate = { package = \"$crate\", path = \"./$crate\" }" >> Cargo.toml
+echo "pub extern crate __$crate as $1;" >> src/lib.rs
+''']
