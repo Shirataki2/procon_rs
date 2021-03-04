@@ -1,7 +1,11 @@
+extern crate __procon_math_traits as math_traits;
+
 use std::cell::RefCell;
 use std::marker::PhantomData;
 use std::mem::swap;
 use std::ops::*;
+
+use math_traits::{Zero, One};
 
 pub type ModInt = DynamicModInt;
 pub type ModInt167772161 = StaticModInt<Mod167772161>;
@@ -12,6 +16,78 @@ pub type ModInt1012924417 = StaticModInt<Mod1012924417>;
 pub type ModInt1224736769 = StaticModInt<Mod1224736769>;
 
 type Num = i64;
+
+pub trait ModuloInteger:
+    Copy
+    + Clone
+    + Ord
+    + Eq
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
+    + Div<Output = Self>
+    + AddAssign
+    + SubAssign
+    + MulAssign
+    + DivAssign
+    + Zero
+    + One
+    + From<Num>
+{
+    type Int: Sized;
+    fn modulo(&self) -> Self::Int; 
+}
+
+impl Zero for DynamicModInt {
+    fn zero() -> Self {
+        DynamicModInt::new(0)
+    }
+}
+
+impl One for DynamicModInt {
+    fn one() -> Self {
+        DynamicModInt::new(1)
+    }
+}
+
+impl From<Num> for DynamicModInt {
+    fn from(num: Num) -> Self {
+        Self::new(num)
+    }
+}
+
+impl ModuloInteger for DynamicModInt {
+    type Int = Num;
+    fn modulo(&self) -> Num {
+        modulo()
+    } 
+}
+
+impl<M: ModuloPrimitive> Zero for StaticModInt<M> {
+    fn zero() -> Self {
+        Self::new(0)
+    }
+}
+
+impl<M: ModuloPrimitive> One for StaticModInt<M> {
+    fn one() -> Self {
+        Self::new(1)
+    }
+}
+
+impl<M: ModuloPrimitive> From<Num> for StaticModInt<M> {
+    fn from(num: Num) -> Self {
+        Self::new(num)
+    }
+}
+
+impl<M: ModuloPrimitive + Ord> ModuloInteger for StaticModInt<M> {
+    type Int = Num;
+
+    fn modulo(&self) -> Self::Int {
+        M::modulo()
+    }
+}
 
 thread_local! {
     static MOD: RefCell<Num> = RefCell::new(0);
@@ -234,16 +310,9 @@ define_modulo_primitive!(Mod167772161, 167772161, 3);
 define_modulo_primitive!(Mod469762049, 469762049, 3);
 define_modulo_primitive!(Mod1224736769, 1224736769, 3);
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct StaticModInt<M>(Num, PhantomData<M>);
 
-impl<M> Clone for StaticModInt<M> {
-    fn clone(&self) -> StaticModInt<M> {
-        StaticModInt(self.0, PhantomData)
-    }
-}
-
-impl<M> Copy for StaticModInt<M> {}
 
 impl<M: ModuloPrimitive> StaticModInt<M> {
     pub fn new<T>(v: T) -> StaticModInt<M>
@@ -562,15 +631,6 @@ where
         let mut res = StaticModInt::<M>::new(self);
         res /= rhs.value();
         res
-    }
-}
-
-impl<M> PartialEq for StaticModInt<M>
-where
-    M: ModuloPrimitive,
-{
-    fn eq(&self, rhs: &Self) -> bool {
-        self.value() == rhs.value()
     }
 }
 

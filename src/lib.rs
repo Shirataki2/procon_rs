@@ -12,3 +12,4 @@ pub extern crate __procon_rollinghash as rollinghash;
 pub extern crate __procon_string as string;
 pub extern crate __procon_graph as graph;
 pub extern crate __procon_shortest_path as shortest_path;
+pub extern crate __procon_bicoef as bicoef;
