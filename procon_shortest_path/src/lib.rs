@@ -4,7 +4,11 @@ extern crate __procon_math_traits as math_traits;
 use graph::{Graph, MatrixGraph};
 use math_traits::{BoundedAbove, Zero};
 
-use std::{cmp::{Reverse, min}, collections::BinaryHeap, ops::{Add, Index, IndexMut}};
+use std::{
+    cmp::{min, Reverse},
+    collections::BinaryHeap,
+    ops::{Add, Index, IndexMut},
+};
 
 pub struct Dijkstra<N, E> {
     graph: Graph<N, E>,
@@ -21,14 +25,18 @@ where
         let n = graph.len();
         let dists = vec![E::maximum(); n];
         let backs = vec![None; n];
-        Dijkstra { graph, dists, backs }
+        Dijkstra {
+            graph,
+            dists,
+            backs,
+        }
     }
 }
 
 impl<N, E> Dijkstra<N, E>
 where
     N: Clone,
-    E: Copy + Eq + Ord + Zero + Add<Output = E>
+    E: Copy + Eq + Ord + Zero + Add<Output = E>,
 {
     pub fn build(&mut self, start: usize) {
         let mut heap = BinaryHeap::new();
@@ -36,7 +44,9 @@ where
         heap.push(Reverse((self.dists[start], start)));
         while !heap.is_empty() {
             let Reverse((d, v)) = heap.pop().unwrap();
-            if self.dists[v] < d { continue; }
+            if self.dists[v] < d {
+                continue;
+            }
             for e in self.graph[v].iter() {
                 if self.dists[e.to] > self.dists[v] + e.weight {
                     self.dists[e.to] = self.dists[v] + e.weight;
@@ -50,7 +60,9 @@ where
     pub fn restore(&self, goal: usize) -> Vec<usize> {
         let mut path = vec![goal];
         let mut cur = self.backs[goal];
-        if cur.is_none() { return vec![]; }
+        if cur.is_none() {
+            return vec![];
+        }
         while let Some(v) = cur {
             path.push(v);
             cur = self.backs[v];
@@ -75,14 +87,18 @@ where
         let n = graph.len();
         let dists = vec![E::maximum(); n];
         let backs = vec![None; n];
-        BellmanFord { graph, dists, backs }
+        BellmanFord {
+            graph,
+            dists,
+            backs,
+        }
     }
 }
 
 impl<N, E> BellmanFord<N, E>
 where
     N: Clone,
-    E: Copy + Eq + Ord + Zero + Add<Output = E> + BoundedAbove
+    E: Copy + Eq + Ord + Zero + Add<Output = E> + BoundedAbove,
 {
     pub fn build(&mut self, start: usize) -> bool {
         self.dists[start] = E::zero();
@@ -92,8 +108,9 @@ where
             for from in 0..n {
                 let edges = &self.graph[from];
                 for edge in edges.iter() {
-                    if self.dists[from] != E::maximum() && 
-                    self.dists[edge.to] > self.dists[from] + edge.weight {
+                    if self.dists[from] != E::maximum()
+                        && self.dists[edge.to] > self.dists[from] + edge.weight
+                    {
                         self.dists[edge.to] = self.dists[from] + edge.weight;
                         self.backs[edge.to] = Some(from);
                         updated = true;
@@ -113,7 +130,9 @@ where
     pub fn restore(&self, goal: usize) -> Vec<usize> {
         let mut path = vec![goal];
         let mut cur = self.backs[goal];
-        if cur.is_none() { return vec![]; }
+        if cur.is_none() {
+            return vec![];
+        }
         while let Some(v) = cur {
             path.push(v);
             cur = self.backs[v];
@@ -147,7 +166,7 @@ impl<E> IndexMut<usize> for WarshallFloyd<E> {
 
 impl<E> WarshallFloyd<E>
 where
-    E: Copy + Eq + Ord + BoundedAbove + Add<Output = E> + Zero
+    E: Copy + Eq + Ord + BoundedAbove + Add<Output = E> + Zero,
 {
     pub fn build(&mut self) {
         let n = self.0.len();
@@ -170,8 +189,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::graph::SimpleGraph;
+    use super::*;
 
     #[test]
     fn test_dijkstra_1() {
@@ -278,8 +297,8 @@ mod tests {
         let mut g = WarshallFloyd::from(g);
         g.build();
         let inf = std::i32::MAX;
-        assert_eq!(g[0], vec![  0,   1, 3, 4]);
-        assert_eq!(g[1], vec![inf,   0, 2, 3]);
+        assert_eq!(g[0], vec![0, 1, 3, 4]);
+        assert_eq!(g[1], vec![inf, 0, 2, 3]);
         assert_eq!(g[2], vec![inf, inf, 0, 1]);
         assert_eq!(g[3], vec![inf, inf, 7, 0]);
     }

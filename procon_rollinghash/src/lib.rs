@@ -1,4 +1,7 @@
-use std::{marker::PhantomData, ops::{RangeBounds, Bound}};
+use std::{
+    marker::PhantomData,
+    ops::{Bound, RangeBounds},
+};
 
 type Num = u128;
 
@@ -12,10 +15,14 @@ macro_rules! define_hash {
         #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
         pub struct $id;
         impl Hash for $id {
-            fn modulo() -> Num { $modulo }
-            fn base() -> Num { $base }
+            fn modulo() -> Num {
+                $modulo
+            }
+            fn base() -> Num {
+                $base
+            }
         }
-    }
+    };
 }
 
 define_hash!(Hash61, 1_024_578_101, 2_305_843_009_213_693_951);
@@ -34,10 +41,15 @@ impl<H: Hash, B: AsRef<[u8]>> From<B> for RollingHash<H> {
         let mut pow = vec![1; n + 1];
         let mut hash = vec![0; n + 1];
         for i in 0..n {
-            pow[i+1] = pow[i] * H::base() % H::modulo();
-            hash[i+1] = (hash[i] * H::base() + s[i] as Num) % H::modulo();
+            pow[i + 1] = pow[i] * H::base() % H::modulo();
+            hash[i + 1] = (hash[i] * H::base() + s[i] as Num) % H::modulo();
         }
-        Self { size: n, pow, hash, __phantom: PhantomData }
+        Self {
+            size: n,
+            pow,
+            hash,
+            __phantom: PhantomData,
+        }
     }
 }
 
@@ -63,7 +75,7 @@ pub fn find_substring<H: Hash>(s: &RollingHash<H>, t: &RollingHash<H>) -> Vec<us
     let th = t.hash(..);
     let mut indices = vec![];
     for i in 0..=(s.size - t.size) {
-        let sh = s.hash(i..=i+t.size);
+        let sh = s.hash(i..=i + t.size);
         if sh == th {
             indices.push(i);
         }
@@ -79,7 +91,8 @@ mod tests {
 
     #[test]
     fn test_simple_rolling_hash() {
-        let s: RollingHash61 = "unvhusmjlvieloveuybouqvnqjygutqlovedkfsdfgheaiuloveaeiuvaygayfg".into();
+        let s: RollingHash61 =
+            "unvhusmjlvieloveuybouqvnqjygutqlovedkfsdfgheaiuloveaeiuvaygayfg".into();
         let t: RollingHash61 = "love".into();
         let indices = find_substring(&s, &t);
         assert_eq!(indices, vec![12, 31, 47]);

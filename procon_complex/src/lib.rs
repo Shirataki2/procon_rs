@@ -1,6 +1,6 @@
 extern crate __procon_math_traits as math_traits;
 
-use math_traits::{PrimitiveFloating, Zero, One};
+use math_traits::{One, PrimitiveFloating, Zero};
 use std::ops::*;
 
 #[derive(Debug, Clone, Copy, PartialEq)]

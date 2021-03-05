@@ -1,7 +1,14 @@
 extern crate __procon_modint as modint;
 
-use modint::{StaticModInt, ModuloPrimitive, Mod167772161, Mod469762049, Mod924844033, Mod998244353, Mod1012924417, Mod1224736769};
-use std::{iter::FromIterator, marker::PhantomData, ops::{Index, IndexMut, Mul}};
+use modint::{
+    Mod1012924417, Mod1224736769, Mod167772161, Mod469762049, Mod924844033, Mod998244353,
+    ModuloPrimitive, StaticModInt,
+};
+use std::{
+    iter::FromIterator,
+    marker::PhantomData,
+    ops::{Index, IndexMut, Mul},
+};
 
 pub type Ntt167772161 = NumberTheoreticTransform<i64, Mod167772161>;
 pub type Ntt469762049 = NumberTheoreticTransform<i64, Mod469762049>;
@@ -25,9 +32,12 @@ impl<N, M> NumberTheoreticTransform<N, M> {
 
     fn bit_reverse<T>(v: &mut [T]) {
         let mut i = 0;
-        for j in 1..v.len()-1 {
+        for j in 1..v.len() - 1 {
             let mut k = v.len() >> 1;
-            while { i ^= k; k > i } {
+            while {
+                i ^= k;
+                k > i
+            } {
                 k >>= 1;
             }
             if i > j {
@@ -39,16 +49,17 @@ impl<N, M> NumberTheoreticTransform<N, M> {
 
 impl<N, M> NumberTheoreticTransform<N, M>
 where
-    M: ModuloPrimitive
+    M: ModuloPrimitive,
 {
-    
     fn dft(f: &mut [StaticModInt<M>], inv: bool) {
         let n = f.len();
         Self::bit_reverse(f);
         let pr = StaticModInt::<M>::from(M::primitive_root());
         for i in (0..).map(|i| 1 << i).take_while(|&i| i < n) {
             let mut w = pr.pow((M::modulo() - 1) / (2 * i as i64));
-            if inv { w = 1 / w; }
+            if inv {
+                w = 1 / w;
+            }
             for k in 0..i {
                 let wn = w.pow(k as i64);
                 for j in (0..).map(|j| 2 * i * j).take_while(|&j| j < n) {
@@ -82,7 +93,7 @@ impl<N, M> Mul for NumberTheoreticTransform<N, M>
 where
     M: ModuloPrimitive,
     N: Copy + Into<i64>,
-    Vec<N>: FromIterator<i64>
+    Vec<N>: FromIterator<i64>,
 {
     type Output = Vec<N>;
     fn mul(self, rhs: Self) -> Self::Output {
@@ -119,9 +130,6 @@ mod tests {
         let f: Ntt = vec![0, 1, 2, 3, 4].into();
         let g: Ntt = vec![0, 1, 2, 4, 8].into();
         let x = f * g;
-        assert_eq!(
-            x,
-            vec![0, 0, 1, 4, 11, 26, 36, 40, 32, 0, 0]
-        )
+        assert_eq!(x, vec![0, 0, 1, 4, 11, 26, 36, 40, 32, 0, 0])
     }
 }

@@ -4,7 +4,7 @@ extern crate __procon_math_traits as math_traits;
 use complex::Complex;
 use math_traits::{PrimitiveFloating, Zero};
 
-use std::ops::{Mul, Index, IndexMut};
+use std::ops::{Index, IndexMut, Mul};
 
 pub struct FastFourierTransform<F: PrimitiveFloating>(Vec<F>);
 
@@ -21,9 +21,12 @@ impl<F: PrimitiveFloating> FastFourierTransform<F> {
 
     fn bit_reverse<T>(v: &mut [T]) {
         let mut i = 0;
-        for j in 1..v.len()-1 {
+        for j in 1..v.len() - 1 {
             let mut k = v.len() >> 1;
-            while { i ^= k; k > i } {
+            while {
+                i ^= k;
+                k > i
+            } {
                 k >>= 1;
             }
             if i > j {
@@ -31,14 +34,14 @@ impl<F: PrimitiveFloating> FastFourierTransform<F> {
             }
         }
     }
-    
+
     fn dft(f: &mut [Complex<F>], inv: bool) {
         let size = f.len();
         let pi = if inv { -F::pi() } else { F::pi() };
         Self::bit_reverse(f);
         for i in (0..).map(|i| 1 << i).take_while(|&i| i < size) {
             for k in 0..i {
-                let theta = F::cast_f64(k as f64)* pi / F::cast_f64(i as f64);
+                let theta = F::cast_f64(k as f64) * pi / F::cast_f64(i as f64);
                 let w = Complex::from_polar(F::one(), theta);
                 for j in (0..).map(|j| 2 * i * j).take_while(|&j| j < size) {
                     let s = f[j + k];
@@ -48,7 +51,7 @@ impl<F: PrimitiveFloating> FastFourierTransform<F> {
                 }
             }
         }
-    } 
+    }
 }
 
 impl<F: PrimitiveFloating> Index<usize> for FastFourierTransform<F> {
@@ -103,9 +106,6 @@ mod tests {
         let g: Fft = vec![0.0, 1.0, 2.0, 4.0, 8.0].into();
         let x = f * g;
         let x = x.iter().map(|v| v.round() as i32).collect::<Vec<_>>();
-        assert_eq!(
-            x,
-            vec![0, 0, 1, 4, 11, 26, 36, 40, 32, 0, 0]
-        )
+        assert_eq!(x, vec![0, 0, 1, 4, 11, 26, 36, 40, 32, 0, 0])
     }
 }

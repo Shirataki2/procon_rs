@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 use std::mem::swap;
 use std::ops::*;
 
-use math_traits::{Zero, One};
+use math_traits::{One, Zero};
 
 pub type ModInt = DynamicModInt;
 pub type ModInt167772161 = StaticModInt<Mod167772161>;
@@ -35,7 +35,7 @@ pub trait ModuloInteger:
     + From<Num>
 {
     type Int: Sized;
-    fn modulo(&self) -> Self::Int; 
+    fn modulo(&self) -> Self::Int;
 }
 
 impl Zero for DynamicModInt {
@@ -60,7 +60,7 @@ impl ModuloInteger for DynamicModInt {
     type Int = Num;
     fn modulo(&self) -> Num {
         modulo()
-    } 
+    }
 }
 
 impl<M: ModuloPrimitive> Zero for StaticModInt<M> {
@@ -312,7 +312,6 @@ define_modulo_primitive!(Mod1224736769, 1224736769, 3);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct StaticModInt<M>(Num, PhantomData<M>);
-
 
 impl<M: ModuloPrimitive> StaticModInt<M> {
     pub fn new<T>(v: T) -> StaticModInt<M>

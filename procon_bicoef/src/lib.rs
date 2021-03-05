@@ -1,6 +1,6 @@
 extern crate __procon_modint as modint;
 
-use modint::{ModuloInteger, DynamicModInt};
+use modint::{DynamicModInt, ModuloInteger};
 
 pub type ModBicoef = Bicoef<DynamicModInt>;
 
