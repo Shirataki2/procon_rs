@@ -9,6 +9,7 @@ members = [
     "procon_math_traits",
     "procon_modint",
     "procon_multiset",
+    "procon_ntt",
     "procon_rollinghash",
     "procon_segtree",
     "procon_shortest_path",
@@ -44,3 +45,4 @@ __procon_graph = { package = "procon_graph", path = "./procon_graph" }
 __procon_shortest_path = { package = "procon_shortest_path", path = "./procon_shortest_path" }
 __procon_bicoef = { package = "procon_bicoef", path = "./procon_bicoef" }
 __procon_fft = { package = "procon_fft", path = "./procon_fft" }
+__procon_ntt = { package = "procon_ntt", path = "./procon_ntt" }

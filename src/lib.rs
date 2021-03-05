@@ -13,3 +13,4 @@ pub extern crate __procon_graph as graph;
 pub extern crate __procon_shortest_path as shortest_path;
 pub extern crate __procon_bicoef as bicoef;
 pub extern crate __procon_fft as fft;
+pub extern crate __procon_ntt as ntt;
