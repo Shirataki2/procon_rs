@@ -2,6 +2,7 @@
 members = [
     "procon_bicoef",
     "procon_complex",
+    "procon_fft",
     "procon_graph",
     "procon_input",
     "procon_itertools",
@@ -44,3 +45,4 @@ __procon_string = { package = "procon_string", path = "./procon_string" }
 __procon_graph = { package = "procon_graph", path = "./procon_graph" }
 __procon_shortest_path = { package = "procon_shortest_path", path = "./procon_shortest_path" }
 __procon_bicoef = { package = "procon_bicoef", path = "./procon_bicoef" }
+__procon_fft = { package = "procon_fft", path = "./procon_fft" }

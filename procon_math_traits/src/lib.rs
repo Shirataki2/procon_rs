@@ -117,6 +117,9 @@ pub trait PrimitiveFloating:
         asinh acosh atanh recip to_degrees to_radians
     );
 
+    fn cast_f32(v: f32) -> Self;
+    fn cast_f64(v: f64) -> Self;
+
     fn sin_cos(self) -> (Self, Self);
     fn atan2(self, rhs: Self) -> Self;
     fn hypot(self, rhs: Self) -> Self;
@@ -294,6 +297,14 @@ macro_rules! impl_primitive_floating {
             fn pi_deg() -> Self { 180.0 }
             fn tau() -> Self { std::$t::consts::PI * 2.0 }
             fn tau_deg() -> Self { 360.0 }
+
+            fn cast_f32(v: f32) -> $t {
+                v as $t
+            }
+
+            fn cast_f64(v: f64) -> $t {
+                v as $t
+            }
         }
     )*}
 }

@@ -1,5 +1,5 @@
 [package]
-name = "procon_itertools"
+name = "procon_fft"
 version = "0.1.0"
 authors = ["Tomoya Ishii <shi2gx@gmail.com>"]
 edition = "2018"
@@ -8,3 +8,5 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+__procon_complex = { package = "procon_complex", path = "../procon_complex" }
+__procon_math_traits = { package = "procon_math_traits", path = "../procon_math_traits" }

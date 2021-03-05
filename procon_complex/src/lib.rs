@@ -1,6 +1,6 @@
 extern crate __procon_math_traits as math_traits;
 
-use math_traits::PrimitiveFloating;
+use math_traits::{PrimitiveFloating, Zero, One};
 use std::ops::*;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -80,6 +80,18 @@ impl<F: PrimitiveFloating> Complex<F> {
     pub fn ln(&self) -> Complex<F> {
         let (r, arg) = self.to_polar();
         Complex(r.ln(), arg)
+    }
+}
+
+impl<F: PrimitiveFloating> Zero for Complex<F> {
+    fn zero() -> Complex<F> {
+        Complex(F::zero(), F::zero())
+    }
+}
+
+impl<F: PrimitiveFloating> One for Complex<F> {
+    fn one() -> Complex<F> {
+        Complex(F::one(), F::zero())
     }
 }
 
