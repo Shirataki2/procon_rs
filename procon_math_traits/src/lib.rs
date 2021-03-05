@@ -20,11 +20,11 @@ pub trait Signed {
 pub trait Unsigned {}
 
 pub trait BoundedBelow {
-    fn min() -> Self;
+    fn minimum() -> Self;
 }
 
 pub trait BoundedAbove {
-    fn max() -> Self;
+    fn maximum() -> Self;
 }
 
 pub trait Monoid {
@@ -196,13 +196,13 @@ macro_rules! impl_primitive_integer {
 
         impl BoundedBelow for $t {
             #[inline]
-            fn min() -> Self {
+            fn minimum() -> Self {
                 Self::min_value()
             }
         }
 
         impl BoundedAbove for $t {
-            fn max() -> Self {
+            fn maximum() -> Self {
                 Self::max_value()
             }
         }

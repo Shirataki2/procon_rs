@@ -1,4 +1,10 @@
-use std::{cmp::Ordering, ops::{Index, IndexMut}};
+extern crate __procon_math_traits as math_traits;
+
+use math_traits::{BoundedAbove, Zero};
+use std::{
+    cmp::Ordering,
+    ops::{Index, IndexMut},
+};
 
 pub type SimpleGraph<E> = Graph<(), E>;
 
@@ -6,6 +12,11 @@ pub type SimpleGraph<E> = Graph<(), E>;
 pub enum Graph<N, E> {
     Directed(DirectedGraph<N, E>),
     Undirected(UndirectedGraph<N, E>),
+}
+
+#[derive(Debug, Clone)]
+pub struct MatrixGraph<E> {
+    matrix: Vec<Vec<E>>,
 }
 
 #[derive(Debug, Clone)]
@@ -113,7 +124,7 @@ impl<N, E> Index<usize> for Graph<N, E> {
     }
 }
 
-impl<N, E> IndexMut<usize> for Graph<N, E>{
+impl<N, E> IndexMut<usize> for Graph<N, E> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         use Graph::*;
         match self {
@@ -179,7 +190,7 @@ impl<N, E> Index<usize> for UndirectedGraph<N, E> {
     }
 }
 
-impl<N, E> IndexMut<usize> for UndirectedGraph<N, E>{
+impl<N, E> IndexMut<usize> for UndirectedGraph<N, E> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.edges[index]
     }
@@ -230,7 +241,7 @@ where
     pub fn node_weight_mut(&mut self, index: usize) -> Option<&mut N> {
         self.nodes.get_mut(index).map(|n| &mut n.weight)
     }
-    
+
     pub fn len(&self) -> usize {
         self.nodes.len()
     }
@@ -243,9 +254,55 @@ impl<N, E> Index<usize> for DirectedGraph<N, E> {
     }
 }
 
-impl<N, E> IndexMut<usize> for DirectedGraph<N, E>{
+impl<N, E> IndexMut<usize> for DirectedGraph<N, E> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.edges[index]
+    }
+}
+
+impl<E> MatrixGraph<E>
+where
+    E: Clone + BoundedAbove + Zero,
+{
+    pub fn new(size: usize) -> MatrixGraph<E> {
+        let mut matrix = vec![vec![E::maximum(); size]; size];
+        for i in 0..size {
+            matrix[i][i] = E::zero();
+        }
+        MatrixGraph { matrix }
+    }
+}
+
+impl<E> MatrixGraph<E> {
+    pub fn len(&self) -> usize {
+        self.matrix.len()
+    }
+
+    pub fn add_edge(&mut self, from: usize, to: usize, weight: E) {
+        self.matrix[from][to] = weight;
+    }
+}
+
+impl<E> Index<usize> for MatrixGraph<E> {
+    type Output = Vec<E>;
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.matrix[index]
+    }
+}
+
+impl<E> IndexMut<usize> for MatrixGraph<E> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.matrix[index]
+    }
+}
+
+impl<E> MatrixGraph<E>
+where
+    E: Clone,
+{
+    pub fn add_edge_undirected(&mut self, from: usize, to: usize, weight: E) {
+        self.matrix[from][to] = weight.clone();
+        self.matrix[to][from] = weight;
     }
 }
 
