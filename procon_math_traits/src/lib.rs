@@ -343,7 +343,7 @@ where
 pub struct Minimum<T>(PhantomData<fn() -> T>);
 impl<T> Monoid for Minimum<T>
 where
-    T: Copy + BoundedAbove + Ord,
+    T: Clone + BoundedAbove + Ord,
 {
     type T = T;
     fn id() -> T {
@@ -351,14 +351,14 @@ where
     }
 
     fn op(a: &T, b: &T) -> T {
-        std::cmp::min(*a, *b)
+        std::cmp::min(a.clone(), b.clone())
     }
 }
 
 pub struct Maximum<T>(PhantomData<fn() -> T>);
 impl<T> Monoid for Maximum<T>
 where
-    T: Copy + BoundedBelow + Ord,
+    T: Clone + BoundedBelow + Ord,
 {
     type T = T;
     fn id() -> T {
@@ -366,7 +366,7 @@ where
     }
 
     fn op(a: &T, b: &T) -> T {
-        std::cmp::max(*a, *b)
+        std::cmp::max(a.clone(), b.clone())
     }
 }
 

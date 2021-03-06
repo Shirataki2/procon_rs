@@ -4,6 +4,7 @@ pub extern crate __procon_complex as complex;
 pub extern crate __procon_fft as fft;
 pub extern crate __procon_graph as graph;
 pub extern crate __procon_itertools as itertools;
+pub extern crate __procon_lazy_segtree as lazy_segtree;
 pub extern crate __procon_math as math;
 pub extern crate __procon_math_traits as math_traits;
 pub extern crate __procon_modint as modint;

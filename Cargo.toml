@@ -5,6 +5,7 @@ members = [
     "procon_fft",
     "procon_graph",
     "procon_itertools",
+    "procon_lazy_segtree",
     "procon_math",
     "procon_math_traits",
     "procon_modint",
@@ -46,3 +47,4 @@ __procon_shortest_path = { package = "procon_shortest_path", path = "./procon_sh
 __procon_bicoef = { package = "procon_bicoef", path = "./procon_bicoef" }
 __procon_fft = { package = "procon_fft", path = "./procon_fft" }
 __procon_ntt = { package = "procon_ntt", path = "./procon_ntt" }
+__procon_lazy_segtree = { package = "procon_lazy_segtree", path = "./procon_lazy_segtree" }
