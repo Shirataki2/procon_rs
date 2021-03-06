@@ -340,6 +340,36 @@ where
     }
 }
 
+pub struct Minimum<T>(PhantomData<fn() -> T>);
+impl<T> Monoid for Minimum<T>
+where
+    T: Copy + BoundedAbove + Ord,
+{
+    type T = T;
+    fn id() -> T {
+        T::maximum()
+    }
+
+    fn op(a: &T, b: &T) -> T {
+        std::cmp::min(*a, *b)
+    }
+}
+
+pub struct Maximum<T>(PhantomData<fn() -> T>);
+impl<T> Monoid for Maximum<T>
+where
+    T: Copy + BoundedBelow + Ord,
+{
+    type T = T;
+    fn id() -> T {
+        T::minimum()
+    }
+
+    fn op(a: &T, b: &T) -> T {
+        std::cmp::max(*a, *b)
+    }
+}
+
 pub struct Gcd<T>(PhantomData<fn() -> T>);
 impl<T: PrimitiveInteger> Monoid for Gcd<T> {
     type T = T;
