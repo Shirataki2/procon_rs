@@ -2,6 +2,7 @@
 pub extern crate __procon_bicoef as bicoef;
 pub extern crate __procon_complex as complex;
 pub extern crate __procon_fft as fft;
+pub extern crate __procon_fps as fps;
 pub extern crate __procon_graph as graph;
 pub extern crate __procon_itertools as itertools;
 pub extern crate __procon_lazy_segtree as lazy_segtree;

@@ -520,7 +520,7 @@ where
             rhs %= m;
         }
         self.0 *= rhs;
-        self.0 %= m;
+        self.0 = self.0.rem_euclid(m);
     }
 }
 

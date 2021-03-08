@@ -74,6 +74,28 @@ where
             f.iter_mut().for_each(|v| *v /= n as i64);
         }
     }
+
+    pub fn multiply(f: &[StaticModInt<M>], g: &[StaticModInt<M>]) -> Vec<StaticModInt<M>> {
+        let m = f.len() + g.len() + 1;
+        let n = m.next_power_of_two();
+        let zero = StaticModInt::<M>::new(0);
+        let mut ff = vec![zero; n];
+        let mut gg = vec![zero; n];
+        for i in 0..f.len() {
+            ff[i] += f[i];
+        }
+        for i in 0..g.len() {
+            gg[i] += g[i];
+        }
+        Self::dft(&mut ff, false);
+        Self::dft(&mut gg, false);
+        for i in 0..n {
+            ff[i] *= gg[i];
+        }
+        Self::dft(&mut ff, true);
+        ff.resize(m, zero);
+        ff
+    }
 }
 
 impl<N, M> Index<usize> for NumberTheoreticTransform<N, M> {
@@ -97,25 +119,17 @@ where
 {
     type Output = Vec<N>;
     fn mul(self, rhs: Self) -> Self::Output {
-        let m = self.len() + rhs.len() + 1;
-        let n = m.next_power_of_two();
-        let zero = StaticModInt::<M>::new(0);
-        let mut ff = vec![zero; n];
-        let mut gg = vec![zero; n];
-        for i in 0..self.len() {
-            ff[i] += self[i].into();
-        }
-        for i in 0..rhs.len() {
-            gg[i] += rhs[i].into();
-        }
-        Self::dft(&mut ff, false);
-        Self::dft(&mut gg, false);
-        for i in 0..n {
-            ff[i] *= gg[i];
-        }
-        Self::dft(&mut ff, true);
-        ff.resize(m, zero);
-        ff.iter().map(|&m| m.value()).collect()
+        let f = self
+            .0
+            .iter()
+            .map(|&v| StaticModInt::<M>::new(v.into()))
+            .collect::<Vec<_>>();
+        let g = rhs
+            .0
+            .iter()
+            .map(|&v| StaticModInt::<M>::new(v.into()))
+            .collect::<Vec<_>>();
+        Self::multiply(&f, &g).iter().map(|&v| v.value()).collect()
     }
 }
 
