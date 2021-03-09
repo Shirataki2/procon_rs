@@ -13,7 +13,7 @@ use std::{
 pub struct Dijkstra<N, E> {
     graph: Graph<N, E>,
     pub dists: Vec<E>,
-    backs: Vec<Option<usize>>,
+    pub backs: Vec<Option<usize>>,
 }
 
 impl<N, E> From<Graph<N, E>> for Dijkstra<N, E>
