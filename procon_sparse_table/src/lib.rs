@@ -52,8 +52,8 @@ where
         for i in 0..n {
             table[i][0] = i;
         }
-        for k in (1..n).take_while(|k| (1 << k) <= n) {
-            for i in (0..n).take_while(|i| i + (1 << k) <= n) {
+        for k in (1..n).take_while(|k| (1usize << k) <= n) {
+            for i in (0..n).take_while(|i| i + (1usize << k) <= n) {
                 let v1 = table[i][k - 1];
                 let v2 = table[i + (1 << (k - 1))][k - 1];
                 table[i][k] = if Op::compare(&v[v1], &v[v2]) { v1 } else { v2 };
