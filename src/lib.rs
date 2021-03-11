@@ -16,3 +16,5 @@ pub extern crate __procon_segtree as segtree;
 pub extern crate __procon_shortest_path as shortest_path;
 pub extern crate __procon_string as string;
 pub extern crate __procon_unionfind as unionfind;
+pub extern crate __procon_suffixarray as suffixarray;
+pub extern crate __procon_sparse_table as sparse_table;

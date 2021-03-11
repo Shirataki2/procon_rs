@@ -16,6 +16,8 @@ members = [
     "procon_segtree",
     "procon_shortest_path",
     "procon_string",
+    "procon_suffixarray",
+    "procon_sparse_table",
     "procon_unionfind",
 ]
 
@@ -50,3 +52,5 @@ __procon_fft = { package = "procon_fft", path = "./procon_fft" }
 __procon_ntt = { package = "procon_ntt", path = "./procon_ntt" }
 __procon_lazy_segtree = { package = "procon_lazy_segtree", path = "./procon_lazy_segtree" }
 __procon_fps = { package = "procon_fps", path = "./procon_fps" }
+__procon_suffixarray = { package = "procon_suffixarray", path = "./procon_suffixarray" }
+__procon_sparse_table = { package = "procon_sparse_table", path = "./procon_sparse_table" }

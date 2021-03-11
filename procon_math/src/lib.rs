@@ -198,6 +198,72 @@ pub fn floor_sum<T: Int>(n: T, m: T, mut a: T, mut b: T) -> T {
     ans
 }
 
+pub struct Factorizer {
+    left: usize,
+    right: usize,
+    middle: usize,
+    small: Vec<usize>,
+    large: Vec<Vec<usize>>,
+    aux: Vec<usize>,
+}
+
+impl Factorizer {
+    pub fn new(left: usize, right: usize) -> Self {
+        let m = (right as f64).sqrt().ceil() as usize;
+        let mut small = (0..m).collect::<Vec<_>>();
+        let mut large = vec![vec![]; right - left];
+        let mut aux = vec![1; right - left];
+        for i in 2.. {
+            if i * i >= right {
+                break;
+            }
+            if small[i] < i {
+                continue;
+            }
+            small[i] = i;
+            let mut j = i * i;
+            while j < m {
+                if small[j] == j {
+                    small[j] = i;
+                }
+                j += i;
+            }
+            let mut j = (left + i - 1) / i * i;
+            while j < right {
+                let mut k = j;
+                while {
+                    if aux[j - left] * aux[j - left] > right {
+                        false
+                    } else {
+                        large[j - left].push(i);
+                        aux[j - left] *= i;
+                        k /= i;
+
+                        k % i == 0
+                    }
+                } {}
+                j += i;
+            }
+        }
+        Self { left, right, middle: m, small, large, aux }
+    }
+
+    pub fn factor(&self, mut n: usize) -> Vec<usize> {
+        assert!(self.left <= n && n <= self.right);
+        let mut res = self.large[n - self.left].clone();
+        n /= self.aux[n - self.left];
+        if n >= self.middle {
+            res.push(n);
+            return res
+        }
+        while n > 1 {
+            res.push(self.small[n]);
+            n /= self.small[n];
+        }
+        res
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -224,6 +290,13 @@ mod tests {
     fn test_factorize() {
         assert_eq!(factorize(24), vec![2, 2, 2, 3]);
         assert_eq!(factorize(498640), vec![2, 2, 2, 2, 5, 23, 271]);
+    }
+
+    #[test]
+    fn test_seive_factorize() {
+        let f = Factorizer::new(1, 1_000_000);
+        assert_eq!(f.factor(24), vec![2, 2, 2, 3]);
+        assert_eq!(f.factor(498640), vec![2, 2, 2, 2, 5, 23, 271]);
     }
 
     #[test]
